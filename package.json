@@ -1,13 +1,33 @@
 {
   "name": "angular-s3-compressed",
   "version": "0.0.0",
+  "config": {
+    "templateFile": "template.yml",
+    "packagedTemplateFile": "packaged.yaml",
+    "region": "us-east-1",
+    "stackName": "compressed-website-stack",
+    "stackBucketName": "compressed-website-stack-bucket",
+    "frontEndBucketName": "compressed-website-front-end-files-bucket"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+
+    "setenv": "setx AWS_PROFILE \"myprofile\"",
+    "whoami": "aws sts get-caller-identity",
+    "create-stack": "aws cloudformation create-stack --stack-name %npm_package_config_stackName% --template-body %npm_package_config_templateFile% --parameters ParameterKey=FrontEndBucketName,ParameterValue=%npm_package_config_frontEndBucketName%",
+    "deploy": "aws cloudformation deploy --template %npm_package_config_templateFile% --stack-name %npm_package_config_stackName% --parameters  ParameterKey=FrontEndBucketName,ParameterValue=%npm_package_config_frontEndBucketName%",
+    "describe": "aws cloudformation describe-stacks --region %npm_package_config_region% --stack-name %npm_package_config_stackName% >> temp/latest_stack_description.json",
+    "delete-last-desc": "del .\\temp\\latest_stack_description.json",
+    "clean-deploy": "run-s setenv build package deploy delete-last-desc describe",
+    "upload-fe": "run-s delete-files build_and_deploy.bat",
+    "delete-stack": "aws cloudformation delete-stack --stack-name %npm_package_config_stackName%",
+    "delete-files": "aws s3 rm s3://%npm_package_config_feBucketName% --recursive",
+    "delete-all": "run-s delete-files delete-stack"
   },
   "private": true,
   "dependencies": {
@@ -45,6 +65,7 @@
     "rename-webpack-plugin": "2.0.0",
     "ts-node": "8.3.0",
     "tslint": "6.1.0",
-    "typescript": "4.0.2"
+    "typescript": "4.0.2",
+    "npm-run-all": "4.1.5"
   }
 }
