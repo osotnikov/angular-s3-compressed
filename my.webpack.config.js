@@ -6,16 +6,16 @@ module.exports = {
   entry: {
   },
   output: {
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist') // __dirname is an object provided by nodejs, the directory name of the current module.
   },
   plugins: [
     new CompressionPlugin({
-      test: /\.(js|css|txt)$/,
-      deleteOriginalAssets: true,
+      test: /\.(js|css|txt)$/, // "test" refers to the regex pattern to match against when this plugin looks for files to compress
+      deleteOriginalAssets: true, // leave only the compressed files in the dist folder
     }),
     new RenameWebpackPlugin({
-      originNameReg: /(.*).gz/,
-      targetName: '$1'
+      originNameReg: /(.*).gz/, // capture the original name in a regex capturing group
+      targetName: '$1' // refers to the previously captured capturing group
     })
   ]
 };
