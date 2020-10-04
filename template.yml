@@ -12,8 +12,8 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref FrontEndBucketName
-      AccessControl: PublicRead
-      WebsiteConfiguration:
+      AccessControl: PublicRead # Canned ACL on the bucket level, by itself  won't allow public read on individual files.
+      WebsiteConfiguration: # We need to provide this section for the bucket to function as a static website server
         IndexDocument: index.html
         ErrorDocument: error.html
   BucketPolicy:
@@ -23,7 +23,7 @@ Resources:
         Id: FrontEndFilesBucketPolicy
         Version: 2012-10-17
         Statement:
-          - Sid: PublicReadForGetBucketObjects
+          - Sid: PublicReadForGetBucketObjects # Policy to make all object uploaded to the bucket public
             Effect: Allow
             Principal: '*'
             Action: 's3:GetObject'
@@ -34,7 +34,7 @@ Resources:
                 - /*
       Bucket: !Ref FrontEndFilesBucket
 Outputs:
-  WebsiteURL:
+  WebsiteURL: # Public URL to access our website on
     Value: !GetAtt
       - FrontEndFilesBucket
       - WebsiteURL
